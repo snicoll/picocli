@@ -11,12 +11,80 @@ import static org.junit.Assert.*;
 
 public class Issue2342 {
     static class CompileOptions {
-        @Option(names = { "--compiler-arguments" }, split = " ", arity = "*",
+        @Option(names = { "--compiler-arguments" }, split = " ",
             description = "Compiler arguments to use to compile generated sources.")
         private List<String> compilerArguments;
+
+		@Option(names = "--target", description = "Test for presence in compiler arguments")
+		private String target;
+
     }
 
-    @Test
+	@Test
+	public void testArgsWithCompilerArgumentsSingleQuoteOnValue() {
+		CompileOptions co = new CompileOptions();
+		String[] args = new String[] {
+				"--compiler-arguments",
+				"'--parameters",
+				"--target",
+				"21'",
+				"--target",
+				"my-file.jar"
+		};
+		new CommandLine(co).parseArgs(args);
+		// expect compilerArguments: "--parameters", "--target", "21"
+		// expect target: "my-file.jar"
+	}
+
+	@Test
+	public void testArgsWithCompilerArgumentsDoubleQuoteOnValue() {
+		CompileOptions co = new CompileOptions();
+		String[] args = new String[] {
+				"--compiler-arguments",
+				"\"--parameters",
+				"--target",
+				"21\"",
+				"--target",
+				"my-file.jar"
+		};
+		new CommandLine(co).parseArgs(args);
+		// expect compilerArguments: "--parameters", "--target", "21"
+		// expect target: "my-file.jar"
+	}
+
+	@Test
+	public void testArgsWithCompilerArgumentsSingleQuote() {
+		CompileOptions co = new CompileOptions();
+		String[] args = new String[] {
+				"'--compiler-arguments",
+				"--parameters",
+				"--target",
+				"21'",
+				"--target",
+				"my-file.jar"
+		};
+		new CommandLine(co).parseArgs(args);
+		// expect compilerArguments: "--parameters", "--target", "21"
+		// expect target: "my-file.jar"
+	}
+
+	@Test
+	public void testArgsWithCompilerArgumentsDoubleQuote() {
+		CompileOptions co = new CompileOptions();
+		String[] args = new String[] {
+				"\"--compiler-arguments",
+				"--parameters",
+				"--target",
+				"21\"",
+				"--target",
+				"my-file.jar"
+		};
+		new CommandLine(co).parseArgs(args);
+		// expect compilerArguments: "--parameters", "--target", "21"
+		// expect target: "my-file.jar"
+	}
+
+	@Test
     public void testArgsWithSpaces() {
         CompileOptions co = new CompileOptions();
         String[] args = new String[] {
