@@ -63,7 +63,7 @@ public class Issue2342FileArg {
 
 	}
 
-	@Test
+	@Test // This fails because quotes aren't present
 	public void testWithSingleArgumentValueFromFile() throws IOException {
 		Path tempDir = Files.createTempDirectory("test");
 		Path argsFile = tempDir.resolve("args");
@@ -76,7 +76,9 @@ public class Issue2342FileArg {
 		};
 
 		CompileOptions co = new CompileOptions();
-		new CommandLine(co).parseArgs(args);
+		CommandLine commandLine = new CommandLine(co);
+		commandLine.setUseSimplifiedAtFiles(true);
+		commandLine.parseArgs(args);
 		String[] expected = new String[] {
 				"--parameters", "--source", "21", "--target", "21", "-nowarn"
 		};
